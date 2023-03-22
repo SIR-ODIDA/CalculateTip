@@ -2,4 +2,6 @@
     <string name="app_name">Calculate Tip</string>
     <string name="cost_of_service">Cost of Service</string>
     <string name="tip_amount">Tip amount: $%s</string>
+    <string name="tip_percentage">Tip percentage</string>
+    <string name="calculate">Calculate</string>
 </resources>

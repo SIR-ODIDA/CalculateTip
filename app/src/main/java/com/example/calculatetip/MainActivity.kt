@@ -5,10 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +47,11 @@ fun TipScreen() {
             )
         }
 
+        var tipPercent by remember {
+            mutableStateOf(
+                "0"
+            )
+        }
 
         var tip by remember {
             mutableStateOf(
@@ -70,7 +72,6 @@ fun TipScreen() {
             value = inputAmount,
             onValueChange = { costOfService ->
                 inputAmount = costOfService
-                tip = calculateTip(costOfService)
             },
             label = { Text(stringResource(id = R.string.cost_of_service))},
             modifier = Modifier.fillMaxWidth(),
@@ -78,6 +79,27 @@ fun TipScreen() {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
+        Spacer(Modifier.height(16.dp))
+
+        TextField(
+            value = tipPercent,
+            onValueChange = { tipPercentage ->
+                tipPercent = tipPercentage
+            },
+            label = { Text(stringResource(id = R.string.tip_percentage))},
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+
+
+        Spacer(Modifier.height(16.dp))
+
+        Button(onClick = {
+            tip = calculateTip(inputAmount, tipPercent)
+        }, modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth()) {
+            Text(text = stringResource(id = R.string.calculate) )
+        }
         Spacer(Modifier.height(16.dp))
 
         Text(
@@ -92,13 +114,20 @@ fun TipScreen() {
     }
 }
 
-fun calculateTip(newValue: String): String {
+fun calculateTip(costOfService: String, percentage: String): String {
     /**
      * We will assume tip amount is 15% of the cost of service
      */
-    val costOfService = newValue.toDoubleOrNull()
-    costOfService?.let {
-        return (it * 0.15).toString()
+    val tipCostOfService = costOfService.toDoubleOrNull()
+    val tipPercentage = percentage.toDoubleOrNull()
+    if(tipPercentage != null && tipPercentage != 0.0){
+        tipCostOfService?.let {
+            return (it * (tipPercentage / 100)).toString()
+        }
+    } else {
+        tipCostOfService?.let {
+            return (it * 0.15).toString()
+        }
     }
     return "0.0"
 }
